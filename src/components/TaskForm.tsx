@@ -27,7 +27,11 @@ export function TaskForm() {
         id="new-task"
         placeholder="What would you like to get done?"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => {
+          setTitle(e.target.value);
+          if (error) setError("");
+        }}
+        aria-invalid={error ? true : undefined}
         aria-describedby={error ? "form-error" : undefined}
       />
       <label className="sr-only" htmlFor="new-priority">

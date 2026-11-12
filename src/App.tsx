@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { TaskProvider } from "./context/TaskContext";
 import { useTasks } from "./hooks/useTasks";
 import { TaskForm } from "./components/TaskForm";
@@ -12,11 +12,12 @@ export function Workspace() {
   const { tasks, storageError } = useTasks();
   const [filter, setFilter] = useState<TaskFilter>("all");
   const [query, setQuery] = useState("");
-  function changeFilter(next: TaskFilter) {
-    setFilter(next);
-    setQuery("");
-  }
-  const visible = orderTasks(searchTasks(filterTasks(tasks, filter), query));
+  // Status and search are independent: switching status must keep the query so
+  // the two refinements compose instead of resetting each other.
+  const visible = useMemo(
+    () => orderTasks(searchTasks(filterTasks(tasks, filter), query)),
+    [tasks, filter, query],
+  );
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -91,7 +92,7 @@ export function Workspace() {
               </p>
             )}
             <div className="task-toolbar">
-              <TaskFilters value={filter} onChange={changeFilter} />
+              <TaskFilters value={filter} onChange={setFilter} />
               <TaskSearch value={query} onChange={setQuery} />
             </div>
             <TaskList visibleTasks={visible} />

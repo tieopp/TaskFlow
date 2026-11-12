@@ -1,12 +1,10 @@
-import { useMemo } from "react";
 import { useTasks } from "../hooks/useTasks";
+
 export function TaskStats() {
   const { tasks } = useTasks();
-  const completed = useMemo(
-    () => tasks.filter((task) => task.completed).length,
-    [tasks.length],
-  );
-  const active = tasks.filter((task) => !task.completed).length;
+  const total = tasks.length;
+  const completed = tasks.filter((task) => task.completed).length;
+  const active = total - completed;
   return (
     <section aria-label="Task statistics" className="stats-grid">
       <article>
@@ -15,7 +13,7 @@ export function TaskStats() {
         </span>
         <div>
           <span className="stat-label">Total tasks</span>
-          <strong data-testid="total-count">{tasks.length}</strong>
+          <strong data-testid="total-count">{total}</strong>
         </div>
         <span className="stat-note">Everything on your plate</span>
       </article>
